@@ -12,7 +12,7 @@
 .Sh SYNOPSIS
 .
 .Nm sni-shunt
-.Op Fl e Ar ENV=/path/%s/file.pem
+.Op Fl e Ar ENV=/path/%/file.pem
 .Ar cmd
 .Op Ar arg...
 .
@@ -29,13 +29,13 @@ if found, and always execute into the rest of the arguments
 .
 .Bl
 .
-.It Fl e Ar ENV=/path/%s/file.pem
+.It Fl e Ar ENV=/path/%/file.pem
 Export the environment variable
 .Ev ENV
 as
-.Ar /path/%s/file.pem ,
+.Ar /path/%/file.pem ,
 with
-.Ar %s
+.Ar %
 replaced by the ServerName found.
 .
 .El

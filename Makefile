@@ -9,6 +9,7 @@ clean:
 install:
 	mkdir -p "${PREFIX}/bin"
 	cp ${bin} "${PREFIX}/bin"
+	cp sni-debug.sh "${PREFIX}/bin/sni-debug"
 	mkdir -p "${MANPREFIX}/man1"
 	cp doc/*.1 "${MANPREFIX}/man1"
 

@@ -9,14 +9,8 @@
 int
 envfmt_parse(char *s, char **env, char **fmt)
 {
-	char *cp;
-
 	*fmt = s;
 	if ((*env = strsep(fmt, "=")) == NULL)
-		return -1;
-	if ((cp = strchr(*fmt, '%')) == NULL || cp[1] != 's')
-		return -1;
-	if ((cp = strchr(cp + 1, '%')) != NULL)
 		return -1;
 	return 0;
 }
@@ -24,13 +18,27 @@ envfmt_parse(char *s, char **env, char **fmt)
 int
 envfmt_export(struct envfmt *ef, char const *sni)
 {
-	char buf[1024];
+	char buf[1024], *b = buf;
+	size_t n = sizeof(buf);
 
-	if (snprintf(buf, sizeof(buf), ef->fmt, sni) >= (int)sizeof(buf))
-		return errno=ENAMETOOLONG, -1;
-	if (setenv(ef->env, buf, 1))
-		return -1;
-	return 0;
+	for (char *fmt = ef->fmt; *fmt != '\0'; fmt++) {
+		if (*fmt == '%') {
+			size_t i;
+
+			if ((i = strlcpy(b, sni, n)) >= n)
+				return errno=ENAMETOOLONG, -1;
+			b += i;
+			n -= i;
+		} else {
+			if (--n == 0)
+				return errno=ENAMETOOLONG, -1;;
+			*b++ = *fmt;
+		}
+	}
+	if (--n == 0)
+		return errno=ENAMETOOLONG, -1;;
+	*b++ = '\0';
+	return setenv(ef->env, buf, 1);
 }
 
 void

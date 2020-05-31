@@ -169,7 +169,7 @@ void
 usage(void)
 {
 	fprintf(stderr, "usage: %s"
-	  " [-e ENV=/path/%%s/file.pem]"
+	  " [-e ENV=/path/%%/file.pem]"
 	  " cmd [arg...]"
 	  "\n", conf.arg0);
 	exit(1);
