@@ -4,8 +4,8 @@ trap 'rm -rf "$tmp"' INT TERM EXIT HUP
 
 cd "$tmp/doc"
 
-notwiki-doc html "/srv/www/htdocs/code/sni-shunt" .
+notwiki-doc html "/srv/www/site/code/sni-shunt" .
 notwiki-doc gph  "/srv/gopher/sni-shunt" .
 notwiki-mandoc gph utf8 "/srv/gopher/man" .
-notwiki-mandoc html html "/srv/www/htdocs/code/man" .
-cp "style.css" "/srv/www/htdocs/code"
+notwiki-mandoc html html "/srv/www/site/code/man" .
+cp "style.css" "/srv/www/site/code"
