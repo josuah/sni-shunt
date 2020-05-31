@@ -1,11 +1,16 @@
 include content.mk
-
-CFLAGS = -Isrc -Wall -Wextra -std=c99 -pedantic -D_POSIX_C_SOURCE=200811L
+include config.mk
 
 all: ${bin}
 
 clean:
 	rm -rf *.o ${bin}
+
+install:
+	mkdir -p "${PREFIX}/bin"
+	cp ${bin} "${PREFIX}/bin"
+	mkdir -p "${MANPREFIX}/man1"
+	cp doc/*.1 "${MANPREFIX}/man1"
 
 ${bin}: ${bin:=.o} ${src:.c=.o}
 	${CC} -o $@ ${bin}.o ${src:.c=.o}
