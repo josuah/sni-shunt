@@ -1,2 +1,3 @@
 #!/bin/sh -e
-exec env >&2 "$@"
+env >&2
+exec "$@"
