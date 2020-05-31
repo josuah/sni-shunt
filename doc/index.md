@@ -19,8 +19,15 @@ the Server Name value (no TLS library needed for that).
 If found, it sets the `SERVER_NAME` to the string encountered, as well as 
 others variables according to patterns sent via the `-e` command line flag.
 
-For instance, to choose the certificate file according to a pattern:
+For instance, to choose the certificate file according to a pattern and then
+starting the httpd within the connexion:
 
 ```
-$ s6-tcpserver 0.0.0.0 443 sni-shunt
+$ s6-tcpserver :: 443 \
+  sni-shunt \
+    -e KEYFILE=/etc/letsencrypt/live/%/privkey.pem \
+    -e CERTFILE=/etc/letsencrypt/live/%/fullchain.pem \
+  s6-tlsd \
+  env UID="$(id -u www)" GID="$(id -g www)" ROOT="/srv/www/htdocs" \
+  httpfile-httpd
 ```
