@@ -1,15 +1,14 @@
-CFLAGS = -Isrc -Wall -Wextra -std=c99 -pedantic -D_POSIX_C_SOURCE=200811L
+include content.mk
 
-bin = sni-shunt
-obj = src/log.o src/util.o
+CFLAGS = -Isrc -Wall -Wextra -std=c99 -pedantic -D_POSIX_C_SOURCE=200811L
 
 all: ${bin}
 
 clean:
 	rm -rf *.o ${bin}
 
-sni-shunt: sni-shunt.o ${obj}
-	${CC} -o $@ sni-shunt.o ${obj}
+${bin}: ${bin:=.o} ${src:.c=.o}
+	${CC} -o $@ ${bin}.o ${src:.c=.o}
 
 .c.o:
 	${CC} -c -o $@ ${CFLAGS} $<

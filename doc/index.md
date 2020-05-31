@@ -16,4 +16,4 @@ Once a client opens a TLS session, it peeks at the first 1024 bytes and parse
 the Server Name value (no TLS library needed for that).
 
 If found, it sets the `SERVER_NAME` to the string encountered, as well as 
-others according to patterns sent via command line flags.
+others variables according to patterns sent via the `-e` command line flag.

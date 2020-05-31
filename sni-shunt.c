@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #include "log.h"
-#include "util.h"
+#include "envfmt.h"
 
 struct {
 	char *arg0, **argv;
@@ -169,44 +169,33 @@ void
 usage(void)
 {
 	fprintf(stderr, "usage: %s"
-	  " [-p CERTFILE=/path/%%s/cert.pem] [-s PRIVKEY=/path/%%s/privkey.pem]"
-	  " cmd [arg...]\n", conf.arg0);
+	  " [-e ENV=/path/%%s/file.pem]"
+	  " cmd [arg...]"
+	  "\n", conf.arg0);
 	exit(1);
-}
-
-int
-setenv_sni(char *fmt, char const *sni)
-{
-	char *env, *cp, buf[1024];
-
-	if ((env = strsep(&fmt, "=")) == NULL)
-		usage();
-	if ((cp = strchr(fmt, '%')) == NULL || cp[1] != 's')
-		usage();
-	if ((cp = strchr(cp, '%')) != NULL)
-		usage();
-
-	if (snprintf(buf, sizeof(buf), fmt, sni) >= (int)sizeof(buf))
-		return errno=ENAMETOOLONG, -1;
-
-	if (setenv(env, buf, 1))
-		return -1;
-
-	return 0;
 }
 
 int
 main(int argc, char **argv)
 {
-	int c;
+	struct envfmt *list = NULL;
 	char buf[1024], server_name[1024];
 	ssize_t len;
+	int c;
 
 	conf.arg0 = *argv;
-	while ((c = getopt(argc, argv, "p:s:")) > -1) {
+	while ((c = getopt(argc, argv, "e:")) > -1) {
+		char *env, *fmt;
+
 		if (c == '?')
 			usage();
-		conf.flag[c] = optarg ? optarg : "1";
+
+		if (envfmt_parse(optarg, &env, &fmt) < 0) {
+			warn("invalid environment variable format");
+			usage();
+		}
+		if (envfmt_add_new(&list, env, fmt) < 0)
+			die("adding environment pattern to list");
 	}
 	conf.argv = argv + optind;
 	if ((argc -= optind) == 0)
@@ -219,12 +208,10 @@ main(int argc, char **argv)
 
 	if (setenv("SERVER_NAME", server_name, 1) == -1)
 		die("setenv SERVER_NAME=%s", server_name);
-	if (conf.flag['p'])
-		if (setenv_sni(conf.flag['p'], server_name) < 0)
-			die("setenv %s", conf.flag['p']);
-	if (conf.flag['s'])
-		if (setenv_sni(conf.flag['s'], server_name) < 0)
-			die("setenv %s", conf.flag['s']);
+	for (struct envfmt *ef = list; ef; ef = ef->next)
+		if (envfmt_export(ef, server_name) < 0)
+			die("setenv %s=%s", ef->env, ef->fmt);
+	envfmt_free(list);
 
 	execvp(conf.argv[0], conf.argv);
 	die("execvp(2) into arguments");
