@@ -1,0 +1,109 @@
+.Dd $Mdocdate: May 31 2020$
+.Dt SNI-SHUNT 1
+.Os
+.
+.
+.Sh NAME
+.
+.Nm sni-shunt
+.Nd dispatch TLS request according to ServerName
+.
+.
+.Sh SYNOPSIS
+.
+.Nm sni-shunt
+.Op Fl e Ar ENV=/path/%s/file.pem
+.Ar cmd
+.Op Ar arg...
+.
+.
+.Sh DESCRIPTION
+.
+The
+.Nm
+utility expect an open TCP socket on standard input, and read the begining of
+the stream without altering it.
+It then scan the ServerName TLS extension then exports environment variables
+if found, and always execute into the rest of the arguments
+.Ar cmd arg
+.
+.Bl
+.
+.It Fl e Ar ENV=/path/%s/file.pem
+Export the environment variable
+.Ev ENV
+as
+.Ar /path/%s/file.pem ,
+with
+.Ar %s
+replaced by the ServerName found.
+.
+.El
+.
+.
+.Sh ENVIRONMENT
+.
+The
+.Ev LOG
+environment variable controls the logging verbosity from 4 (debug) to 1 (fatal
+errors)
+.
+.Pp
+In addition to the environment variables defined by
+.Fl e ,
+.Nm
+sets the
+.Ev SERVER_NAME
+variable if an SNI extension was found.
+.
+.
+.Sh EXIT STATUS
+.
+.Ex -std
+.
+.
+.Sh EXAMPLES
+.
+.Bd -literal
+$ s6-tcpserver 127.0.0.1 443 sni-shunt s6-tlsd env ROOT=/srv/www httpfile-httpd
+.Ed
+.
+.
+.Sh SEE ALSO
+.
+.Bl -tag -compact
+.
+.It Xr calico 1
+.Lk "dispatches cat" https://git.causal.agency/pounce/about/calico.1 ,
+.
+.It Xr sendmsg 1
+in particular MSG_PEEK
+.
+.It Xr s6-tcpserver 8 Ns , Xr s6-tlsd 8
+.Lk "s6-networking" https://skarnet.org/software/s6-networking/
+.
+.El
+.
+.
+.Sh STANDARDS
+.
+.Lk "UNIX Client-Server Program Interface" https://cr.yp.to/proto/ucspi.txt
+.
+.
+.Sh HISTORY
+.
+.Nm
+is heavyly inspired by
+.Xr calico 1
+.
+.
+.Sh AUTHORS
+.
+.An Josuah Demangeon
+.Aq Mt me@josuah.net
+.
+.
+.Sh CAVEATS
+.
+The TLS handling does make use of a complete TLS library, so update in the TLS
+Client Hello message also require an update in this program.

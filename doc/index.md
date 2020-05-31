@@ -1,8 +1,9 @@
 sni-shunt
 =========
 
-[sni-shunt](//code.z0.is/sni-shunt/) is a small utility to dispatch incoming
-TLS request to the apropriate backend according to the TLS Server Name.
+[sni-shunt(1)](//code.z0.is/man/sni-shunt.1) is a small utility to
+dispatch incoming TLS request to the apropriate backend according to the TLS
+Server Name.
 
 It is inspired by [calico](https://git.causal.agency/pounce/about/calico.1),
 with the same approach, but only supports dispatching to UNIX domain sockets.
@@ -17,3 +18,9 @@ the Server Name value (no TLS library needed for that).
 
 If found, it sets the `SERVER_NAME` to the string encountered, as well as 
 others variables according to patterns sent via the `-e` command line flag.
+
+For instance, to choose the certificate file according to a pattern:
+
+```
+$ s6-tcpserver 0.0.0.0 443 sni-shunt
+```
