@@ -1,20 +1,37 @@
-include content.mk
-include config.mk
+NAME = sni-shunt
+VERSION = 0.1
 
-all: ${bin}
+W = -Wall -Wextra
+I = -Isrc
+D = -D_POSIX_C_SOURCE=200811L -DVERSION="${VERSION}"
+CFLAGS = -std=c99 -pedantic $W $I $D
+PREFIX = /usr/local
+MANPREFIX = ${PREFIX}/man
 
-clean:
-	rm -rf *.o ${bin}
+SRC = src/log.c src/util.c src/envfmt.c
+HDR = src/envfmt.h src/util.h src/log.h
+BIN = sni-shunt
+OBJ = ${SRC:.c=.o}
 
-install:
-	mkdir -p "${PREFIX}/bin"
-	cp ${bin} "${PREFIX}/bin"
-	cp sni-debug.sh "${PREFIX}/bin/sni-debug"
-	mkdir -p "${MANPREFIX}/man1"
-	cp doc/*.1 "${MANPREFIX}/man1"
+all: ${BIN}
 
-${bin}: ${bin:=.o} ${src:.c=.o}
-	${CC} -o $@ ${bin}.o ${src:.c=.o}
+${BIN}: ${BIN:=.o} ${OBJ}
+	${CC} -o $@ ${BIN}.o ${OBJ}
 
 .c.o:
 	${CC} -c -o $@ ${CFLAGS} $<
+
+clean:
+	rm -rf ${NAME}-${VERSION} ${BIN} *.o */*.o *.gz
+
+install: all
+	cp -f sni-debug.sh ${DESTDIR}${PREFIX}/bin/sni-debug
+	mkdir -p ${DESTDIR}${PREFIX}/bin
+	cp -f ${BIN} ${DESTDIR}${PREFIX}/bin
+	mkdir -p ${DESTDIR}${MANPREFIX}/man1
+	cp -f doc/*.1 ${DESTDIR}${MANPREFIX}/man1
+
+dist: clean
+	mkdir -p ${NAME}-${VERSION}
+	cp -r README Makefile doc src ${BIN:=.c} ${NAME}-${VERSION}
+	tar -cf - ${NAME}-${VERSION} | gzip -c >${NAME}-${VERSION}.tar.gz
