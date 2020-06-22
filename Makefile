@@ -1,5 +1,5 @@
 NAME = sni-shunt
-VERSION = 0.1
+VERSION = 0.2
 
 W = -Wall -Wextra
 I = -Isrc
@@ -25,9 +25,9 @@ clean:
 	rm -rf ${NAME}-${VERSION} ${BIN} *.o */*.o *.gz
 
 install: all
-	cp -f sni-debug.sh ${DESTDIR}${PREFIX}/bin/sni-debug
 	mkdir -p ${DESTDIR}${PREFIX}/bin
 	cp -f ${BIN} ${DESTDIR}${PREFIX}/bin
+	cp -f sni-debug.sh ${DESTDIR}${PREFIX}/bin/sni-debug
 	mkdir -p ${DESTDIR}${MANPREFIX}/man1
 	cp -f doc/*.1 ${DESTDIR}${MANPREFIX}/man1
 
