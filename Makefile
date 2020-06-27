@@ -3,7 +3,7 @@ VERSION = 0.2
 
 W = -Wall -Wextra
 I = -Isrc
-D = -D_POSIX_C_SOURCE=200811L -DVERSION="${VERSION}"
+D = -D_POSIX_C_SOURCE=200811L -DVERSION='"${VERSION}"'
 CFLAGS = -std=c99 -pedantic $W $I $D
 PREFIX = /usr/local
 MANPREFIX = ${PREFIX}/man
