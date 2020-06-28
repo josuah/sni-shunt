@@ -4,12 +4,12 @@ tmp=$(git-hooks-workdir "$@")
 
 cd "$tmp/doc"
 notwiki-doc html /srv/http/vhost/code/sni-shunt .
-notwiki-doc gph /srv/gopher/code/sni-shunt .
-notwiki-mandoc gph utf8 /srv/gopher/man .
+notwiki-doc gph /srv/gopher/sni-shunt .
 notwiki-mandoc html html /srv/http/vhost/code/man .
+notwiki-mandoc gph utf8 /srv/gopher/man .
 cp style.css /srv/http/vhost/code
 
 cd "$tmp"
 make dist
 cp *.tar.gz /srv/http/vhost/code/sni-shunt
-cp *.tar.gz /srv/gopher/code/sni-shunt
+cp *.tar.gz /srv/gopher/sni-shunt
