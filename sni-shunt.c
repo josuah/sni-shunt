@@ -12,16 +12,15 @@
 #include "log.h"
 #include "envfmt.h"
 
-struct {
-	char *arg0, **argv;
-	char *flag['z'];
-} conf = {0};
+char *log_arg0;
+char **cmd_argv;
+char *flag['z'];
 
 void
 default_name(void)
 {
 	warn("server name not found or incorrect input");
-	execvp(conf.argv[0], conf.argv);
+	execvp(cmd_argv[0], cmd_argv);
 	die("execvp(2) into arguments");
 }
 
@@ -166,12 +165,10 @@ parse(char *buf, char *server_name, size_t len)
 }
 
 void
-usage(void)
+usage(char const *arg0)
 {
-	fprintf(stderr, "usage: %s"
-	  " [-e ENV=/path/%%/file.pem]"
-	  " cmd [arg...]"
-	  "\n", conf.arg0);
+	fprintf(stderr, "usage: %s [-e ENV=/path/%%s/file.pem] cmd [arg...]"
+	  "\n", arg0);
 	exit(1);
 }
 
@@ -183,23 +180,23 @@ main(int argc, char **argv)
 	ssize_t len;
 	int c;
 
-	conf.arg0 = *argv;
+	log_arg0 = *argv;
 	while ((c = getopt(argc, argv, "e:")) > -1) {
 		char *env, *fmt;
 
 		if (c == '?')
-			usage();
+			usage(log_arg0);
 
 		if (envfmt_parse(optarg, &env, &fmt) < 0) {
 			warn("invalid environment variable format");
-			usage();
+			usage(log_arg0);
 		}
 		if (envfmt_add_new(&list, env, fmt) < 0)
 			die("adding environment pattern to list");
 	}
-	conf.argv = argv + optind;
+	cmd_argv = argv + optind;
 	if ((argc -= optind) == 0)
-		usage();
+		usage(log_arg0);
 
 	if ((len = recv(0, buf, sizeof(buf), MSG_PEEK)) == -1)
 		die("first recv");
@@ -213,7 +210,7 @@ main(int argc, char **argv)
 			die("setenv %s=%s", ef->env, ef->fmt);
 	envfmt_free(list);
 
-	execvp(conf.argv[0], conf.argv);
+	execvp(cmd_argv[0], cmd_argv);
 	die("execvp(2) into arguments");
 	return 127;
 }
