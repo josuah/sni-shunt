@@ -12,7 +12,7 @@
 #include "log.h"
 #include "envfmt.h"
 
-char *log_arg0;
+char *arg0;
 char **cmd_argv;
 char *flag['z'];
 
@@ -180,23 +180,25 @@ main(int argc, char **argv)
 	ssize_t len;
 	int c;
 
-	log_arg0 = *argv;
+	arg0 = *argv;
 	while ((c = getopt(argc, argv, "e:")) > -1) {
 		char *env, *fmt;
 
 		if (c == '?')
-			usage(log_arg0);
+			usage(arg0);
 
 		if (envfmt_parse(optarg, &env, &fmt) < 0) {
 			warn("invalid environment variable format");
-			usage(log_arg0);
+			usage(arg0);
 		}
 		if (envfmt_add_new(&list, env, fmt) < 0)
 			die("adding environment pattern to list");
 	}
-	cmd_argv = argv + optind;
-	if ((argc -= optind) == 0)
-		usage(log_arg0);
+	argv += optind;
+	argc -= optind;
+
+	if (argc == 0)
+		usage(arg0);
 
 	if ((len = recv(0, buf, sizeof(buf), MSG_PEEK)) == -1)
 		die("first recv");

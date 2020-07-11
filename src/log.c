@@ -16,74 +16,39 @@
 
 #define LOG_DEFAULT 3 /* info */
 
-int log_level = -1;
-char *log_arg0 = NULL;
+char *arg0 = NULL;
+
+static int log_level = -1;
 
 void
-vlogf(int level, char const *flag, char const *fmt, va_list va)
+log_print(int level, char const *flag, char const *fmt, ...)
 {
+	va_list va;
 	char *env;
-	int e = errno;
+	int old_errno = errno;
+
+	va_start(va, fmt);
 
 	if (log_level < 0) {
 		env = getenv("LOG");
-		log_level = (env == NULL ? 0 : atoi(env));
-		log_level = (log_level > 0 ? log_level : LOG_DEFAULT);
+		log_level = (env == NULL) ? 0 : atoi(env);
+		if (log_level == 0)
+			log_level = LOG_DEFAULT;
 	}
 
 	if (log_level < level)
 		return;
 
-	if (log_arg0 != NULL)
-		fprintf(stderr, "%s: ", log_arg0);
+	if (arg0 != NULL)
+		fprintf(stderr, "%s: ", arg0);
 
 	fprintf(stderr, "%s: ", flag);
 	vfprintf(stderr, fmt, va);
 
-	if (e != 0)
-		fprintf(stderr, ": %s", strerror(e));
+	if (old_errno != 0)
+		fprintf(stderr, ": %s", strerror(old_errno));
 
 	fprintf(stderr, "\n");
 	fflush(stderr);
-}
-
-void
-die(char const *fmt, ...)
-{
-	va_list va;
-
-	va_start(va, fmt);
-	vlogf(1, "error", fmt, va);
-	va_end(va);
-	exit(1);
-}
-
-void
-warn(char const *fmt, ...)
-{
-	va_list va;
-
-	va_start(va, fmt);
-	vlogf(2, "warn", fmt, va);
-	va_end(va);
-}
-
-void
-info(char const *fmt, ...)
-{
-	va_list va;
-
-	va_start(va, fmt);
-	vlogf(3, "info", fmt, va);
-	va_end(va);
-}
-
-void
-debug(char const *fmt, ...)
-{
-	va_list va;
-
-	va_start(va, fmt);
-	vlogf(4, "debug", fmt, va);
 	va_end(va);
 }
