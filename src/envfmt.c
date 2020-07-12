@@ -10,7 +10,8 @@ int
 envfmt_parse(char *s, char **env, char **fmt)
 {
 	*fmt = s;
-	if ((*env = strsep(fmt, "=")) == NULL)
+	*env = strsep(fmt, "=");
+	if (*env == NULL)
 		return -1;
 	return 0;
 }
@@ -25,7 +26,8 @@ envfmt_export(struct envfmt *ef, char const *sni)
 		if (*fmt == '%') {
 			size_t i;
 
-			if ((i = strlcpy(b, sni, n)) >= n)
+			i = strlcpy(b, sni, n);
+			if (i >= n)
 				return errno=ENAMETOOLONG, -1;
 			b += i;
 			n -= i;
@@ -54,7 +56,8 @@ envfmt_new(char *env, char *fmt)
 {
 	struct envfmt *new;
 
-	if ((new = calloc(sizeof(*new), 1)) == NULL)
+	new = calloc(sizeof(*new), 1);
+	if (new == NULL)
 		return NULL;
 	new->env = env;
 	new->fmt = fmt;
@@ -66,7 +69,8 @@ envfmt_add_new(struct envfmt **list, char *env, char *fmt)
 {
 	struct envfmt *new;
 
-	if ((new = envfmt_new(env, fmt)) == NULL)
+	new = envfmt_new(env, fmt);
+	if (new == NULL)
 		return -1;
 	new->next = *list;
 	*list = new;

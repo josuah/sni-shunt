@@ -1,15 +1,16 @@
-#include <string.h>
-
 #include "util.h"
+
+#include <string.h>
 
 size_t
 strlcpy(char *buf, const char *str, size_t sz)
 {
 	size_t len, cpy;
 
-	cpy = ((len = strlen(str)) > sz) ? (sz) : (len);
-	memcpy(buf, str, cpy + 1);
-	buf[sz - 1] = '\0';
+	len = strlen(str);
+	cpy = (len > sz) ? sz : len;
+	memcpy(buf, str, cpy);
+	buf[cpy] = '\0';
 	return len;
 }
 

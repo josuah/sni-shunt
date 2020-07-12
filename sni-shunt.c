@@ -176,7 +176,7 @@ int
 main(int argc, char **argv)
 {
 	struct envfmt *list = NULL;
-	char buf[1024], server_name[1024];
+	char buf[8192], server_name[8192];
 	ssize_t len;
 	int c;
 
@@ -200,12 +200,13 @@ main(int argc, char **argv)
 	if (argc == 0)
 		usage(arg0);
 
-	if ((len = recv(0, buf, sizeof(buf), MSG_PEEK)) == -1)
-		die("first recv");
+	len = recv(0, buf, sizeof(buf), MSG_PEEK);
+	if (len == -1)
+		die("recv");
 
 	parse(buf, server_name, len);
 
-	if (setenv("SERVER_NAME", server_name, 1) == -1)
+	if (setenv("SERVER_NAME", server_name, 1) < 0)
 		die("setenv SERVER_NAME=%s", server_name);
 	for (struct envfmt *ef = list; ef; ef = ef->next)
 		if (envfmt_export(ef, server_name) < 0)
