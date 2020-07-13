@@ -176,7 +176,8 @@ int
 main(int argc, char **argv)
 {
 	struct envfmt *list = NULL;
-	char buf[8192], server_name[8192];
+	char buf[4096], server_name[4096];
+	struct mem_pool pool = {0};
 	ssize_t len;
 	int c;
 
@@ -191,11 +192,12 @@ main(int argc, char **argv)
 			warn("invalid environment variable format");
 			usage(arg0);
 		}
-		if (envfmt_add_new(&list, env, fmt) < 0)
+		if (envfmt_add_new(&list, env, fmt, &pool) < 0)
 			die("adding environment pattern to list");
 	}
 	argv += optind;
 	argc -= optind;
+	cmd_argv = argv;
 
 	if (argc == 0)
 		usage(arg0);
@@ -211,7 +213,6 @@ main(int argc, char **argv)
 	for (struct envfmt *ef = list; ef; ef = ef->next)
 		if (envfmt_export(ef, server_name) < 0)
 			die("setenv %s=%s", ef->env, ef->fmt);
-	envfmt_free(list);
 
 	execvp(cmd_argv[0], cmd_argv);
 	die("execvp(2) into arguments");

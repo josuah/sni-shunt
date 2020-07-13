@@ -8,8 +8,8 @@ CFLAGS = -std=c99 -pedantic $W $I $D
 PREFIX = /usr/local
 MANPREFIX = ${PREFIX}/man
 
-SRC = src/log.c src/util.c src/envfmt.c
-HDR = src/envfmt.h src/util.h src/log.h
+SRC = src/envfmt.c src/log.c src/mem.c src/str.c src/util.c
+HDR = src/envfmt.h src/log.h src/mem.h src/str.h src/util.h
 BIN = sni-shunt
 OBJ = ${SRC:.c=.o}
 

@@ -16,47 +16,45 @@ envfmt_parse(char *s, char **env, char **fmt)
 	return 0;
 }
 
+#include "log.h"
+
 int
-envfmt_export(struct envfmt *ef, char const *sni)
+envfmt_export(struct envfmt *ef, char *sni)
 {
-	char buf[1024], *b = buf;
-	size_t n = sizeof(buf);
+	struct mem_pool pool = {0};
+	struct str str;
+	int e = -1;
 
-	for (char *fmt = ef->fmt; *fmt != '\0'; fmt++) {
-		if (*fmt == '%') {
-			size_t i;
-
-			i = strlcpy(b, sni, n);
-			if (i >= n)
-				return errno=ENAMETOOLONG, -1;
-			b += i;
-			n -= i;
+	if (str_init(&str, &pool) < 0)
+		goto end;
+	for (char *fmt = ef->fmt; *fmt != '\0';) {
+		if (strncmp(fmt, "%%", 2) == 0) {
+			if (str_append_char(&str, '%') < 0)
+				goto end;
+			fmt += 2;
+		} else if (strncmp(fmt, "%s", 2) == 0) {
+			if (str_append_string(&str, sni) < 0)
+				goto end;
+			fmt += 2;
 		} else {
-			if (--n == 0)
-				return errno=ENAMETOOLONG, -1;;
-			*b++ = *fmt;
+			if (str_append_char(&str, *fmt) < 0)
+				goto end;
+			fmt += 1;
 		}
 	}
-	if (--n == 0)
-		return errno=ENAMETOOLONG, -1;;
-	*b++ = '\0';
-	return setenv(ef->env, buf, 1);
-}
-
-void
-envfmt_free(struct envfmt *ef)
-{
-	if (ef->next != NULL)
-		envfmt_free(ef->next);
-	free(ef);
+	e = setenv(ef->env, str_c(&str), 1);
+end:
+	mem_free(&pool);
+	return e;
 }
 
 struct envfmt *
-envfmt_new(char *env, char *fmt)
+envfmt_new(char *env, char *fmt,
+	struct mem_pool *pool)
 {
 	struct envfmt *new;
 
-	new = calloc(sizeof(*new), 1);
+	new = mem_alloc(pool, sizeof *new);
 	if (new == NULL)
 		return NULL;
 	new->env = env;
@@ -65,11 +63,12 @@ envfmt_new(char *env, char *fmt)
 }
 
 int
-envfmt_add_new(struct envfmt **list, char *env, char *fmt)
+envfmt_add_new(struct envfmt **list, char *env, char *fmt,
+	struct mem_pool *pool)
 {
 	struct envfmt *new;
 
-	new = envfmt_new(env, fmt);
+	new = envfmt_new(env, fmt, pool);
 	if (new == NULL)
 		return -1;
 	new->next = *list;
