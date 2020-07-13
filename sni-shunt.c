@@ -161,7 +161,7 @@ parse(char *buf, char *server_name, size_t len)
 	if (strlen(server_name) != len)
 		default_name();
 
-	debug("server_name=%s", server_name);
+	info("server_name=%s", server_name);
 }
 
 void
