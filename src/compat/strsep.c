@@ -1,18 +1,6 @@
-#include "util.h"
-
 #include <string.h>
 
-size_t
-strlcpy(char *buf, const char *str, size_t sz)
-{
-	size_t len, cpy;
-
-	len = strlen(str);
-	cpy = (len > sz) ? sz : len;
-	memcpy(buf, str, cpy);
-	buf[cpy] = '\0';
-	return len;
-}
+#include "compat.h"
 
 char *
 strsep(char **str_p, char const *sep)

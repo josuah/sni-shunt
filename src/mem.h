@@ -49,7 +49,7 @@ struct mem_block {
 void * mem_alloc(struct mem_pool *pool, size_t len);
 int mem_resize(void **pp, size_t len);
 int mem_grow(void **pp, size_t len);
-void mem_shrink(void *v, size_t len);
+int mem_shrink(void **pp, size_t len);
 size_t mem_length(void *v);
 int mem_append(void **pp, char const *buf, size_t len);
 void mem_delete(void *v);

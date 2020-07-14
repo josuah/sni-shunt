@@ -57,7 +57,8 @@ str_append_mem(struct str *str, char const *buf, size_t len)
 	assert(memchr(buf, '\0', len) == NULL);
 	assert(str->mem[str_length(str)] == '\0');
 
-	mem_shrink(str->mem, 1); /* strip '\0' */
+	if (mem_shrink(pp, 1)) /* strip '\0' */
+		return -1;
 	if (mem_append(pp, buf, len) < 0)
 		return -1;
 	if (mem_append(pp, "", 1) < 0)
@@ -73,6 +74,7 @@ int
 str_append_string(struct str *str, char const *s)
 {
 	assert(str->mem[str_length(str)] == '\0');
+
 	return str_append_mem(str, s, strlen(s));
 }
 
@@ -80,7 +82,13 @@ int
 str_append_char(struct str *str, char c)
 {
 	assert(str->mem[str_length(str)] == '\0');
-	return str_append_mem(str, &c, 1);
+
+	str_c(str)[str_length(str)] = c;
+	if (mem_append((void **)str->mem, "", 1) < 0)
+		return -1;
+
+	assert(str->mem[str_length(str)] == '\0');
+	return 0;
 }
 
 int

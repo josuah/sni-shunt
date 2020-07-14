@@ -40,23 +40,26 @@ int
 mem_resize(void **pp, size_t len)
 {
 	struct mem_block *block = mem_block(*pp);
-	int first = (block == block->pool->head);
+	int is_first = (block == block->pool->head);
+	int is_same;
 	void *v;
 
 	v = realloc(block, sizeof *block + len);
 	if (v == NULL)
 		return -1;
+	is_same = (block == v);
 	block = v;
 
-	if (len > block->len)
-		memset(block->buf + block->len, 0, len - block->len);
-
 	block->len = len;
+
+	if (is_same)
+		return 0;
+
 	if (block->prev != NULL)
 		block->prev->next = v;
 	if (block->next != NULL)
 		block->next->prev = v;
-	if (first)
+	if (is_first)
 		block->pool->head = v;
 	*pp = block->buf;
 
@@ -67,23 +70,23 @@ mem_resize(void **pp, size_t len)
 int
 mem_grow(void **pp, size_t len)
 {
+	assert(SIZE_MAX - len >= mem_block(*pp)->len);
+
 	return mem_resize(pp, mem_length(*pp) + len);
 }
 
-void
-mem_shrink(void *v, size_t len)
+int
+mem_shrink(void **pp, size_t len)
 {
-	struct mem_block *block = mem_block(v);
+	assert(mem_block(*pp)->len >= len);
 
-	if (len <= block->len)
-		block->len -= len;
+	return mem_resize(pp, mem_length(*pp) - len);
 }
 
 size_t
 mem_length(void *v)
 {
-	struct mem_block *block = mem_block(v);
-	return block->len;
+	return mem_block(v)->len;
 }
 
 int
