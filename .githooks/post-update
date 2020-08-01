@@ -7,7 +7,6 @@ notwiki-doc html /srv/http/vhost/code/sni-shunt .
 notwiki-doc gph /srv/gopher/sni-shunt .
 notwiki-mandoc html html /srv/http/vhost/code/man .
 notwiki-mandoc gph utf8 /srv/gopher/man .
-cp style.css /srv/http/vhost/code
 
 cd "$tmp"
 make dist
