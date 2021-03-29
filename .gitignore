@@ -2,3 +2,5 @@
 *.gz
 /sni-*[!.][!.]?
 /sni-shunt-[0-9]*
+/index.*
+/style.css

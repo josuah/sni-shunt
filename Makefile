@@ -37,15 +37,14 @@ install:
 	mkdir -p ${DESTDIR}${PREFIX}/bin
 	cp -rf bin ${BIN} ${DESTDIR}${PREFIX}/bin
 	mkdir -p ${DESTDIR}${MANPREFIX}/man1
-	cp -rf doc/*.1 ${DESTDIR}${MANPREFIX}/man1
+	cp -rf *.1 ${DESTDIR}${MANPREFIX}/man1
 
 dist: clean
 	mkdir -p ${NAME}-${VERSION}
-	cp -r README Makefile bin doc ${SRC} ${NAME}-${VERSION}
+	cp -r README.md Makefile bin ${SRC} ${NAME}-${VERSION}
 	tar -cf - ${NAME}-${VERSION} | gzip -c >${NAME}-${VERSION}.tar.gz
 
-deploy: dist
-	notwiki-doc html doc .
-	notwiki-doc gph doc .
-	notwiki-mandoc html html doc .
-	notwiki-mandoc gph utf8 doc .
+site: dist
+	notmarkdown-html README.md | cat .site/head.html >index.html
+	notmarkdown-gph README.md | cat .site/head.gph >index.gph
+	cp .site/style.css .
