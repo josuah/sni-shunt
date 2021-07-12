@@ -45,6 +45,6 @@ dist: clean
 	tar -cf - ${NAME}-${VERSION} | gzip -c >${NAME}-${VERSION}.tar.gz
 
 site: dist
-	notmarkdown-html README.md | cat .site/head.html >index.html
-	notmarkdown-gph README.md | cat .site/head.gph >index.gph
-	cp .site/style.css .
+	notmarkdown README.md | notmarkdown-html | cat .head.html - >index.html
+	notmarkdown README.md | notmarkdown-gph | cat .head.gph - >index.gph
+	sed -i "s/VERSION/${VERSION}/g" index.*
