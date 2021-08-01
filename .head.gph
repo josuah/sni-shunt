@@ -1,3 +1,5 @@
-[9|release vVERSION|/sni-shunt/sni-shunt-VERSION.tgz|server|port]
-[h|git clone git://code.z0.is/sni-shunt/|URL:git://code.z0.is/sni-shunt/||]
-[h|web version|URL:http://code.z0.is/sni-shunt/||]
+[9|release vVERSION|/NAME/NAME-VERSION.tgz|server|port]
+[h|git clone git://git.z0.is/NAME/|URL:git://git.z0.is/NAME/||]
+[1|man pages|/NAME/man/|server|port]
+[h|web version|URL:http://z0.is/NAME/||]
+
