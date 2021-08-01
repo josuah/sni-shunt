@@ -1,5 +1,5 @@
 NAME = sni-shunt
-VERSION = 0.2
+VERSION = 0.3
 PREFIX = /usr/local
 MANPREFIX = ${PREFIX}/man
 
