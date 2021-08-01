@@ -1,6 +1,5 @@
 *.o
-*.gz
-/sni-*[!.][!.]?
+*.tgz
 /sni-shunt-[0-9]*
 /index.*
-/style.css
+/man
