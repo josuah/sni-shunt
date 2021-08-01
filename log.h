@@ -3,8 +3,8 @@
 
 #include <stdarg.h>
 
-/** src/log.c **/
-char *arg0;
+extern char *arg0;
+
 void log_vprintf(int level, char const *flag, char const *fmt, va_list va);
 void die(char const *fmt, ...);
 void warn(char const *fmt, ...);

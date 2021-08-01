@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<title>sni-shunt</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="initial-scale=1.0">
+
+<style>
+body { padding:5em 5ch; font-family:sans; max-width:550pt; margin:auto; line-height:1.4em; }
+a { text-decoration:none; }
+h1,h2,h3,h4,h5,h6 { line-height:2em; }
+pre,code { background: #f6f6f6; }
+pre { padding:1em 2ch; line-height:1.1em; overflow:auto; }
+blockquote { padding-left:1.4ch; margin-left:1ch; border-left:solid 1px grey; }
+img { max-width:100%; }
+</style>
+
+<header>
+<a href="//josuah.net">josuah.net</a>
+<nav style="float:right;">
+<a href="/sni-shunt/sni-shunt-0.1.tar.gz">v0.1</a> -
+<a href="git://code.z0.is/sni-shunt/">git</a> -
+<a href="gopher://code.z0.is/1/sni-shunt/">gopher</a>
+</nav>
+</header>
+<table class="head">
+  <tr>
+    <td class="head-ltitle">SNI-SHUNT(1)</td>
+    <td class="head-vol">General Commands Manual</td>
+    <td class="head-rtitle">SNI-SHUNT(1)</td>
+  </tr>
+</table>
+<div class="manual-text">
+<section class="Sh">
+<h1 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h1>
+<p class="Pp"><code class="Nm">sni-shunt</code> &#x2014;
+    <span class="Nd">dispatch TLS request according to ServerName</span></p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SYNOPSIS"><a class="permalink" href="#SYNOPSIS">SYNOPSIS</a></h1>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">sni-shunt</code></td>
+    <td>[<code class="Fl">-e</code> <var class="Ar">ENV=/path/%/file.pem</var>]
+      <var class="Ar">cmd</var> [<var class="Ar">arg...</var>]</td>
+  </tr>
+</table>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="DESCRIPTION"><a class="permalink" href="#DESCRIPTION">DESCRIPTION</a></h1>
+<p class="Pp">The <code class="Nm">sni-shunt</code> utility expect an open TCP
+    socket on standard input, and read the begining of the stream without
+    altering it. It then scan the ServerName TLS extension then exports
+    environment variables if found, and always execute into the rest of the
+    arguments <var class="Ar">cmd arg</var></p>
+<ul class="Bl-item">
+  <li>Export the environment variable <code class="Ev">ENV</code> as
+      <var class="Ar">/path/%/file.pem</var>, with <var class="Ar">%</var>
+      replaced by the ServerName found.</li>
+</ul>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="ENVIRONMENT"><a class="permalink" href="#ENVIRONMENT">ENVIRONMENT</a></h1>
+<p class="Pp">The <code class="Ev">LOG</code> environment variable controls the
+    logging verbosity from 4 (debug) to 1 (fatal errors)</p>
+<p class="Pp">In addition to the environment variables defined by
+    <code class="Fl">-e</code>, <code class="Nm">sni-shunt</code> sets the
+    <code class="Ev">SERVER_NAME</code> variable if an SNI extension was
+  found.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="EXIT_STATUS"><a class="permalink" href="#EXIT_STATUS">EXIT
+  STATUS</a></h1>
+<p class="Pp">The <code class="Nm">sni-shunt</code> utility exits&#x00A0;0 on
+    success, and&#x00A0;&gt;0 if an error occurs.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="EXAMPLES"><a class="permalink" href="#EXAMPLES">EXAMPLES</a></h1>
+<div class="Bd Li">
+<pre>$ s6-tcpserver 127.0.0.1 443 sni-shunt s6-tlsd env ROOT=/srv/www httpfile-httpd</pre>
+</div>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SEE_ALSO"><a class="permalink" href="#SEE_ALSO">SEE
+  ALSO</a></h1>
+<dl class="Bl-tag Bl-compact">
+  <dt><a class="Xr">calico(1)</a></dt>
+  <dd><a class="Lk" href="dispatches
+      cat">https://git.causal.agency/pounce/about/calico.1</a>,</dd>
+  <dt><a class="Xr">sendmsg(1)</a></dt>
+  <dd>in particular MSG_PEEK</dd>
+  <dt><a class="Xr">s6-tcpserver(8)</a>, <a class="Xr">s6-tlsd(8)</a></dt>
+  <dd><a class="Lk" href="s6-networking">https://skarnet.org/software/s6-networking/</a></dd>
+</dl>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="STANDARDS"><a class="permalink" href="#STANDARDS">STANDARDS</a></h1>
+<p class="Pp"><a class="Lk" href="UNIX Client-Server Program
+    Interface">https://cr.yp.to/proto/ucspi.txt</a></p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="HISTORY"><a class="permalink" href="#HISTORY">HISTORY</a></h1>
+<p class="Pp"><code class="Nm">sni-shunt</code> is heavyly inspired by
+    <a class="Xr">calico(1)</a></p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="AUTHORS"><a class="permalink" href="#AUTHORS">AUTHORS</a></h1>
+<p class="Pp"><span class="An">Josuah Demangeon</span>
+    &lt;<a class="Mt" href="mailto:me@josuah.net">me@josuah.net</a>&gt;</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="CAVEATS"><a class="permalink" href="#CAVEATS">CAVEATS</a></h1>
+<p class="Pp">The TLS handling does make use of a complete TLS library, so
+    update in the TLS Client Hello message also require an update in this
+    program.</p>
+</section>
+</div>
+<table class="foot">
+  <tr>
+    <td class="foot-date">May 31, 2020</td>
+    <td class="foot-os">OpenBSD 6.9</td>
+  </tr>
+</table>

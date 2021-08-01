@@ -1,0 +1,52 @@
+SNI-SHUNT(1)                General Commands Manual               SNI-SHUNT(1)
+
+NAME
+     sni-shunt – dispatch TLS request according to ServerName
+
+SYNOPSIS
+     sni-shunt [-e ENV=/path/%/file.pem] cmd [arg...]
+
+DESCRIPTION
+     The sni-shunt utility expect an open TCP socket on standard input, and
+     read the begining of the stream without altering it.  It then scan the
+     ServerName TLS extension then exports environment variables if found, and
+     always execute into the rest of the arguments cmd arg
+
+     Export the environment variable ENV as /path/%/file.pem, with % replaced
+     by the ServerName found.
+
+ENVIRONMENT
+     The LOG environment variable controls the logging verbosity from 4
+     (debug) to 1 (fatal errors)
+
+     In addition to the environment variables defined by -e, sni-shunt sets
+     the SERVER_NAME variable if an SNI extension was found.
+
+EXIT STATUS
+     The sni-shunt utility exits 0 on success, and >0 if an error occurs.
+
+EXAMPLES
+     $ s6-tcpserver 127.0.0.1 443 sni-shunt s6-tlsd env ROOT=/srv/www httpfile-httpd
+
+SEE ALSO
+     calico(1)
+             https://git.causal.agency/pounce/about/calico.1: dispatches cat,
+     sendmsg(1)
+             in particular MSG_PEEK
+     s6-tcpserver(8), s6-tlsd(8)
+             https://skarnet.org/software/s6-networking/: s6-networking
+
+STANDARDS
+     https://cr.yp.to/proto/ucspi.txt: UNIX Client-Server Program Interface
+
+HISTORY
+     sni-shunt is heavyly inspired by calico(1)
+
+AUTHORS
+     Josuah Demangeon <me@josuah.net>
+
+CAVEATS
+     The TLS handling does make use of a complete TLS library, so update in
+     the TLS Client Hello message also require an update in this program.
+
+OpenBSD 6.9                      May 31, 2020                      OpenBSD 6.9

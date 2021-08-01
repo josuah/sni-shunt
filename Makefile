@@ -7,11 +7,11 @@ D = -D_POSIX_C_SOURCE=200811L -DVERSION='"${VERSION}"'
 CFLAGS = -g -Wall -Wextra -std=c99 --pedantic -fPIC $D
 LDFLAGS = -static
 
-SRC = src/str.c src/log.c src/mem.c src/compat/strsep.c src/compat/strlcpy.c \
-  src/envfmt.c
-HDR = src/mem.h src/envfmt.h src/compat.h src/str.h src/log.h
+SRC = str.c log.c mem.c envfmt.c strsep.c strlcpy.c
+HDR = str.h log.h mem.h envfmt.h compat.h
 BIN = sni-shunt
 OBJ = ${SRC:.c=.o}
+MAN1 = sni-shunt.1
 
 all: ${BIN}
 

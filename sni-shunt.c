@@ -12,7 +12,6 @@
 #include "log.h"
 #include "envfmt.h"
 
-char *arg0;
 char **cmd_argv;
 char *flag['z'];
 

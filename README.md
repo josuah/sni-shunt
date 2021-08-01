@@ -1,6 +1,6 @@
 sni-shunt
 =========
-[sni-shunt(1)](//code.z0.is/man/sni-shunt.1/) is a small utility to
+[sni-shunt(1)](/sni-shunt/man/) is a small utility to
 dispatch incoming TLS request to the apropriate backend according to the TLS
 Server Name.
 
@@ -10,7 +10,7 @@ but calico only supports dispatching to UNIX domain sockets.
 How to use it?
 --------------
 For instance, to choose the certificate file according to a pattern and then
-starting the httpd within the connexion, using [s6-netowrking][s6] for handling
+starting the httpd within the connexion, using [s6-networking][s6] for handling
 TCP and TLS and [httpfile][ht] for handling HTTP:
 
 ```
