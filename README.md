@@ -1,8 +1,8 @@
 sni-shunt
 =========
-`git://git.josuah.net/sni-shunt` - [0.3](/sni-shunt/sni-shunt-0.3.tgz)
+`git://git.josuah.net/sni-shunt` - [0.3](/tool/sni-shunt/sni-shunt-0.3.tgz)
 
-[sni-shunt(1)](/sni-shunt/man/) is a small utility to
+[sni-shunt(1)](/tool/sni-shunt/man/) is a small utility to
 dispatch incoming TLS request to the apropriate backend according to the TLS
 Server Name.
 
